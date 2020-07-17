@@ -1,16 +1,31 @@
 import 'react-native-gesture-handler';
-import React, { useState, createContext, useReducer, useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, {
+  useState,
+  createContext,
+  useReducer,
+  useEffect,
+  useMemo,
+} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-community/async-storage';
-import { AuthContext, Login, Register, List, ItemData, Settings, Info, Splash } from './Screens';
+import {
+  AuthContext,
+  Login,
+  Register,
+  List,
+  ItemData,
+  Settings,
+  Info,
+  Splash,
+} from './Screens';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-export default function App({ navigation }) {
+export default function App({navigation}) {
   const [state, dispatch] = useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -35,7 +50,7 @@ export default function App({ navigation }) {
     {
       isLoading: true,
       userToken: null,
-    }
+    },
   );
 
   useEffect(() => {
@@ -48,8 +63,8 @@ export default function App({ navigation }) {
       } catch (error) {
         // error
       }
-      dispatch({ type: 'RESTORE_TOKEN', token: JSON.parse(userToken) });
-    };
+      dispatch({type: 'RESTORE_TOKEN', token: JSON.parse(userToken)});
+    }
 
     bootstrapAsync();
   }, []);
@@ -72,18 +87,18 @@ export default function App({ navigation }) {
             }
             return response.json();
           })
-          .then((data) => {
+          .then(async (data) => {
             console.log('returned data: ' + JSON.stringify(data.token));
-            AsyncStorage.setItem('userToken', JSON.stringify(data.token));
-            dispatch({ type: 'SIGN_IN', token: data.token });
+            await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
+            dispatch({type: 'SIGN_IN', token: data.token});
           })
           .catch((error) => {
             console.error('Error: ', error);
           });
       },
-      signOut: () => {
-        AsyncStorage.removeItem('userToken');
-        dispatch({ type: 'SIGN_OUT' });
+      signOut: async () => {
+        await AsyncStorage.removeItem('userToken');
+        dispatch({type: 'SIGN_OUT'});
       },
       signUp: async (data) => {
         console.log('Data: ' + JSON.stringify(data));
@@ -101,15 +116,16 @@ export default function App({ navigation }) {
             }
             return response.json();
           })
-          .then((data) => {
-            AsyncStorage.setItem('userToken', JSON.stringify(data.token));
-            dispatch({ type: 'SIGN_IN', token: data.token });
+          .then(async (data) => {
+            await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
+            dispatch({type: 'SIGN_IN', token: data.token});
           })
           .catch((error) => {
             console.error('Error: ', error);
           });
       },
-    }), []
+    }),
+    [],
   );
 
   return (
@@ -118,30 +134,40 @@ export default function App({ navigation }) {
         <Stack.Navigator>
           {state.isLoading ? (
             <Stack.Screen name="Aloitus" component={Splash} />
-          ) : state.userToken == null ?
-              (
-                <>
-                  <Stack.Screen name="Kirjautuminen" component={Login} />
-                  <Stack.Screen name="Rekisteröinti" component={Register} />
-                </>
-              ) : (
-                <>
-                  <Stack.Screen name="Urheiluseuranta" component={Home} initialParams={state.userToken} />
-                  <Stack.Screen name="Tiedot" component={ItemData} />
-                </>
-              )}
+          ) : state.userToken == null ? (
+            <>
+              <Stack.Screen name="Kirjautuminen" component={Login} />
+              <Stack.Screen name="Rekisteröinti" component={Register} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Urheiluseuranta"
+                component={Home}
+                initialParams={state.userToken}
+              />
+              <Stack.Screen name="Tiedot" component={ItemData} />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>
   );
 }
 
-function Home({ route }) {
-
+function Home({route}) {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Tapahtumat" component={List} initialParams={route.params} />
-      <Tab.Screen name="Asetukset" component={Settings} initialParams={route.params} />
+      <Tab.Screen
+        name="Tapahtumat"
+        component={List}
+        initialParams={route.params}
+      />
+      <Tab.Screen
+        name="Asetukset"
+        component={Settings}
+        initialParams={route.params}
+      />
       <Tab.Screen name="Tietoa" component={Info} />
     </Tab.Navigator>
   );

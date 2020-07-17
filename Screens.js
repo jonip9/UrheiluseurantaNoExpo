@@ -1,48 +1,89 @@
 import 'react-native-gesture-handler';
-import React, { useState, createContext, useContext, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, Modal, FlatList, Image } from 'react-native';
-import { Picker } from '@react-native-community/picker';
+import React, {useState, createContext, useContext, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Button,
+  Modal,
+  FlatList,
+  Image,
+} from 'react-native';
+import {Picker} from '@react-native-community/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useIsFocused, NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useIsFocused, NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const AuthContext = createContext();
 
-function Login({ navigation }) {
+function Login({navigation}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn } = useContext(AuthContext);
+  const {signIn} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
       <Text>Käyttäjätunnus</Text>
-      <TextInput value={username} onChangeText={text => setUsername(text)} />
+      <TextInput value={username} onChangeText={(text) => setUsername(text)} />
       <Text>Salasana</Text>
-      <TextInput secureTextEntry={true} value={password} onChangeText={text => setPassword(text)} />
+      <TextInput
+        secureTextEntry={true}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+      />
       <View style={styles.buttonModal}>
-        <Button title="Kirjaudu" onPress={() => signIn({ user: username, pass: password })} />
+        <Button
+          title="Kirjaudu"
+          onPress={() => signIn({user: username, pass: password})}
+        />
       </View>
       <View style={styles.buttonModal}>
-        <Button title="Luo tunnus" onPress={() => navigation.navigate('Rekisteröinti')} />
+        <Button
+          title="Luo tunnus"
+          onPress={() => navigation.navigate('Rekisteröinti')}
+        />
       </View>
     </View>
   );
 }
 
-function Register({ navigation }) {
-  const [regInfo, setRegInfo] = useState({ user: '', pass: '', name: '', year: 1940 });
-  const { signUp } = useContext(AuthContext);
+function Register({navigation}) {
+  const [regInfo, setRegInfo] = useState({
+    user: '',
+    pass: '',
+    name: '',
+    year: 1940,
+  });
+  const {signUp} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
       <Text>Käyttäjätunnus</Text>
-      <TextInput value={regInfo.user} onChangeText={text => setRegInfo(state => ({ ...state, user: text }))} />
+      <TextInput
+        value={regInfo.user}
+        onChangeText={(text) => setRegInfo((state) => ({...state, user: text}))}
+      />
       <Text>Salasana</Text>
-      <TextInput secureTextEntry={true} value={regInfo.pass} onChangeText={text => setRegInfo(state => ({ ...state, pass: text }))} />
+      <TextInput
+        secureTextEntry={true}
+        value={regInfo.pass}
+        onChangeText={(text) => setRegInfo((state) => ({...state, pass: text}))}
+      />
       <Text>Nimi</Text>
-      <TextInput value={regInfo.name} onChangeText={text => setRegInfo(state => ({ ...state, name: text }))} />
+      <TextInput
+        value={regInfo.name}
+        onChangeText={(text) => setRegInfo((state) => ({...state, name: text}))}
+      />
       <Text>Syntymävuosi</Text>
-      <TextInput maxLength={4} keyboardType="numeric" placeholder="1940" onChangeText={text => setRegInfo(state => ({ ...state, year: parseInt(text) }))} />
+      <TextInput
+        maxLength={4}
+        keyboardType="numeric"
+        placeholder="1940"
+        onChangeText={(text) =>
+          setRegInfo((state) => ({...state, year: parseInt(text)}))
+        }
+      />
       <View style={styles.buttonModal}>
         <Button title="OK" onPress={() => signUp(regInfo)} />
       </View>
@@ -53,13 +94,13 @@ function Register({ navigation }) {
   );
 }
 
-function List({ route, navigation }) {
+function List({route, navigation}) {
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(false);
   const isFocused = useIsFocused();
-  const { id } = route.params;
-  const { user } = route.params;
+  const {id} = route.params;
+  const {user} = route.params;
   const url = 'http://192.168.1.102:3000/event/all/' + id;
 
   useEffect(() => {
@@ -87,7 +128,7 @@ function List({ route, navigation }) {
         setError(error);
         setRefresh(false);
         console.error('Error: ', error);
-      })
+      });
   }
 
   function handleRefresh() {
@@ -99,18 +140,26 @@ function List({ route, navigation }) {
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={({ item }) => <ListItem details={item} nav={navigation} refresh={fetchAllEvents} />}
-        keyExtractor={item => JSON.stringify(item.id)}
+        renderItem={({item}) => (
+          <ListItem details={item} nav={navigation} refresh={fetchAllEvents} />
+        )}
+        keyExtractor={(item) => JSON.stringify(item.id)}
         onRefresh={() => handleRefresh()}
-        refreshing={refresh} />
-      <View style={{ marginTop: 10 }}>
-        <Button title="Lisää" onPress={() => navigation.navigate('Tiedot', { userId: id, itemData: null })} />
+        refreshing={refresh}
+      />
+      <View style={{marginTop: 10}}>
+        <Button
+          title="Lisää"
+          onPress={() =>
+            navigation.navigate('Tiedot', {userId: id, itemData: null})
+          }
+        />
       </View>
     </View>
   );
 }
 
-function ListItem({ details, nav, refresh }) {
+function ListItem({details, nav, refresh}) {
   const [modalVisible, setModalVisible] = useState(false);
   const url = 'http://192.168.1.102:3000/event/delete';
 
@@ -120,7 +169,7 @@ function ListItem({ details, nav, refresh }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: details.id })
+      body: JSON.stringify({id: details.id}),
     })
       .then((response) => {
         if (!response.ok) {
@@ -149,7 +198,10 @@ function ListItem({ details, nav, refresh }) {
               <Button title="Kyllä" onPress={() => deleteEvent()} />
             </View>
             <View style={styles.buttonModal}>
-              <Button title="Ei" onPress={() => setModalVisible(!modalVisible)} />
+              <Button
+                title="Ei"
+                onPress={() => setModalVisible(!modalVisible)}
+              />
             </View>
           </View>
         </View>
@@ -166,23 +218,35 @@ function ListItem({ details, nav, refresh }) {
       </View>
       <View style={styles.button}>
         <Button title="Poista" onPress={() => setModalVisible(true)} />
-        <Button title="Muokkaa" onPress={() => nav.navigate('Tiedot', { userId: details.user, itemData: details })} />
+        <Button
+          title="Muokkaa"
+          onPress={() =>
+            nav.navigate('Tiedot', {userId: details.user, itemData: details})
+          }
+        />
       </View>
     </View>
   );
 }
 
-function ItemData({ route, navigation }) {
-  const [formData, setFormData] = useState({ user: route.params.userId, date: new Date(), sport: 1, duration: 0, distance: 0, comment: '' });
+function ItemData({route, navigation}) {
+  const [formData, setFormData] = useState({
+    user: route.params.userId,
+    date: new Date(),
+    sport: 1,
+    duration: 0,
+    distance: 0,
+    comment: '',
+  });
   const [submitMode, setSubmitMode] = useState('add');
   const [show, setShow] = useState(false);
-  const { types, typesError } = useFetchSportTypes();
+  const {types, typesError} = useFetchSportTypes();
 
   useEffect(() => {
     if (route.params.itemData !== null) {
       setSubmitMode('modify');
       setFormData(route.params.itemData);
-      setFormData(state => ({ ...state, date: new Date(state.date) }));
+      setFormData((state) => ({...state, date: new Date(state.date)}));
     }
   }, [route.params.itemData]);
 
@@ -190,7 +254,7 @@ function ItemData({ route, navigation }) {
     const currentDate = selectedDate || formData.date;
     setShow(false);
     //setDate(currentDate);
-    setFormData(state => ({ ...state, date: currentDate }));
+    setFormData((state) => ({...state, date: currentDate}));
   }
 
   async function submitEvent(data) {
@@ -221,9 +285,20 @@ function ItemData({ route, navigation }) {
       <Text>Päivämäärä</Text>
       <Text>{formData.date.toLocaleDateString()}</Text>
       <Button title="Muuta päiväys" onPress={() => setShow(true)} />
-      {show && (<DateTimePicker value={formData.date} mode="date" display="calendar" onChange={onDateChange} />)}
+      {show && (
+        <DateTimePicker
+          value={formData.date}
+          mode="date"
+          display="calendar"
+          onChange={onDateChange}
+        />
+      )}
       <Text>Laji</Text>
-      <Picker selectedValue={formData.sport} onValueChange={(itemValue, itemIndex) => setFormData(state => ({ ...state, sport: parseInt(itemValue) }))}>
+      <Picker
+        selectedValue={formData.sport}
+        onValueChange={(itemValue, itemIndex) =>
+          setFormData((state) => ({...state, sport: parseInt(itemValue)}))
+        }>
         {types.map((item, i) => {
           return (
             <Picker.Item key={item.id} label={item.type} value={item.id} />
@@ -231,11 +306,28 @@ function ItemData({ route, navigation }) {
         })}
       </Picker>
       <Text>Kesto (h)</Text>
-      <TextInput value={checkNan(formData.duration)} keyboardType="numeric" onChangeText={text => setFormData(state => ({ ...state, duration: parseInt(text) }))} />
+      <TextInput
+        value={checkNan(formData.duration)}
+        keyboardType="numeric"
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, duration: parseInt(text)}))
+        }
+      />
       <Text>Matka (km)</Text>
-      <TextInput value={checkNan(formData.distance)} keyboardType="numeric" onChangeText={text => setFormData(state => ({ ...state, distance: parseInt(text) }))} />
+      <TextInput
+        value={checkNan(formData.distance)}
+        keyboardType="numeric"
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, distance: parseInt(text)}))
+        }
+      />
       <Text>Kommentti</Text>
-      <TextInput value={formData.comment} onChangeText={text => setFormData(state => ({ ...state, comment: text }))} />
+      <TextInput
+        value={formData.comment}
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, comment: text}))
+        }
+      />
       <View style={styles.button}>
         <Button title="Tallenna" onPress={() => submitEvent(formData)} />
         <Button title="Peruuta" onPress={() => navigation.goBack()} />
@@ -244,13 +336,18 @@ function ItemData({ route, navigation }) {
   );
 }
 
-function Settings({ route, navigation }) {
+function Settings({route, navigation}) {
   const [formData, setFormData] = useState({});
-  const [passwords, setPasswords] = useState({ id: route.params.id, oldPassword: '', newPassword: '', repeatPassword: '' });
+  const [passwords, setPasswords] = useState({
+    id: route.params.id,
+    oldPassword: '',
+    newPassword: '',
+    repeatPassword: '',
+  });
   const [modalVisible, setModalVisible] = useState(false);
-  const { id } = route.params;
-  const { data, error } = useFetchUserInfo(id);
-  const { signOut } = useContext(AuthContext);
+  const {id} = route.params;
+  const {data, error} = useFetchUserInfo(id);
+  const {signOut} = useContext(AuthContext);
 
   useEffect(() => {
     setFormData(data);
@@ -279,11 +376,14 @@ function Settings({ route, navigation }) {
       })
       .catch((error) => {
         console.error('Error: ', error);
-      })
+      });
   }
 
   function checkPasswords() {
-    if (passwords.oldPassword === data.password && passwords.newPassword === passwords.repeatPassword) {
+    if (
+      passwords.oldPassword === data.password &&
+      passwords.newPassword === passwords.repeatPassword
+    ) {
       saveUserInfo('changepass', passwords);
       setModalVisible(false);
     }
@@ -295,11 +395,29 @@ function Settings({ route, navigation }) {
         <View style={styles.centerModal}>
           <View style={styles.modal}>
             <Text>Vanha salasana</Text>
-            <TextInput secureTextEntry={true} value={passwords.oldPassword} onChangeText={text => setPasswords(state => ({ ...state, oldPassword: text }))} />
+            <TextInput
+              secureTextEntry={true}
+              value={passwords.oldPassword}
+              onChangeText={(text) =>
+                setPasswords((state) => ({...state, oldPassword: text}))
+              }
+            />
             <Text>Uusi salasana</Text>
-            <TextInput secureTextEntry={true} value={passwords.newPassword} onChangeText={text => setPasswords(state => ({ ...state, newPassword: text }))} />
+            <TextInput
+              secureTextEntry={true}
+              value={passwords.newPassword}
+              onChangeText={(text) =>
+                setPasswords((state) => ({...state, newPassword: text}))
+              }
+            />
             <Text>Uusi salasana uudestaan</Text>
-            <TextInput secureTextEntry={true} value={passwords.repeatPassword} onChangeText={text => setPasswords(state => ({ ...state, repeatPassword: text }))} />
+            <TextInput
+              secureTextEntry={true}
+              value={passwords.repeatPassword}
+              onChangeText={(text) =>
+                setPasswords((state) => ({...state, repeatPassword: text}))
+              }
+            />
             <View style={styles.buttonModal}>
               <Button title="Tallenna" onPress={() => checkPasswords()} />
             </View>
@@ -311,14 +429,38 @@ function Settings({ route, navigation }) {
       </Modal>
 
       <Text>Nimi</Text>
-      <TextInput value={formData.name} onChangeText={text => setFormData(state => ({ ...state, name: text }))} />
+      <TextInput
+        value={formData.name}
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, name: text}))
+        }
+      />
       <Text>Pituus (cm)</Text>
-      <TextInput value={checkNan(formData.height)} onChangeText={text => setFormData(state => ({ ...state, height: parseInt(text) }))} />
+      <TextInput
+        value={checkNan(formData.height)}
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, height: parseInt(text)}))
+        }
+      />
       <Text>Paino (kg)</Text>
-      <TextInput value={checkNan(formData.weight)} onChangeText={text => setFormData(state => ({ ...state, weight: parseInt(text) }))} />
+      <TextInput
+        value={checkNan(formData.weight)}
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, weight: parseInt(text)}))
+        }
+      />
       <Text>Syntymävuosi</Text>
-      <TextInput maxLength={4} value={checkNan(formData.birthyear)} onChangeText={text => setFormData(state => ({ ...state, birthyear: parseInt(text) }))} />
-      <Button title="Tallenna" onPress={() => saveUserInfo('modify', formData)} />
+      <TextInput
+        maxLength={4}
+        value={checkNan(formData.birthyear)}
+        onChangeText={(text) =>
+          setFormData((state) => ({...state, birthyear: parseInt(text)}))
+        }
+      />
+      <Button
+        title="Tallenna"
+        onPress={() => saveUserInfo('modify', formData)}
+      />
       <View style={styles.button}>
         <Button title="Vaihda salasana" onPress={() => setModalVisible(true)} />
         <Button title="Kirjaudu ulos" onPress={() => signOut()} />
@@ -356,7 +498,7 @@ function Splash() {
   return (
     <View style={styles.splash}>
       <Text>Odota...</Text>
-      <Image source={ require('./img/android_image.png') } />
+      <Image source={require('./img/android_image.png')} />
     </View>
   );
 }
@@ -384,13 +526,13 @@ function useFetchSportTypes() {
         .catch((error) => {
           setTypesError(error);
           console.error('Error: ', error);
-        })
-    }
+        });
+    };
 
     fetchSportTypes();
   }, []);
 
-  return { types, typesError }
+  return {types, typesError};
 }
 
 function useFetchUserInfo(uid) {
@@ -416,17 +558,17 @@ function useFetchUserInfo(uid) {
         .catch((error) => {
           setError(error);
           console.error('Error: ', error);
-        })
-    }
+        });
+    };
 
     fetchUserInfo();
   }, []);
 
-  return { data, error }
+  return {data, error};
 }
 
 function checkNan(str) {
-  return isNaN(str) | str === null ? '' : str.toString();
+  return isNaN(str) || (str === null) ? '' : str.toString();
 }
 
 const styles = StyleSheet.create({
@@ -466,7 +608,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10,
     padding: 10,
-  }
+  },
 });
 
-export { AuthContext, Login, Register, List, ItemData, Settings, Info, Splash }
+export {AuthContext, Login, Register, List, ItemData, Settings, Info, Splash};
