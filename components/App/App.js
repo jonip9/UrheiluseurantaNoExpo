@@ -3,12 +3,12 @@ import React, {useReducer, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
-import {AuthContext} from './AuthContext';
-import Home from './Home';
-import Login from './Login';
-import Register from './Register';
-import ItemData from './ItemData';
-import Splash from './Splash';
+import {AuthContext} from '../AuthContext';
+import Home from '../Home';
+import Login from '../Login';
+import Register from '../Register';
+import ItemData from '../ItemData';
+import Splash from '../Splash';
 
 const Stack = createStackNavigator();
 

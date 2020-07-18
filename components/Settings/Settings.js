@@ -1,10 +1,10 @@
 import 'react-native-gesture-handler';
 import React, {useState, useContext, useEffect} from 'react';
 import {Text, TextInput, View, Button, Modal} from 'react-native';
-import {Context} from './AuthContext';
-import {styles} from '../styles/styles';
-import {checkNan} from '../utils/helpers';
-import {useFetchUserInfo} from '../hooks/hooks';
+import {Context} from '../AuthContext';
+import {styles} from '../../styles/styles';
+import {checkNan} from '../../utils/helpers';
+import {useFetchUserInfo} from '../../hooks/hooks';
 
 export default function Settings({route, navigation}) {
   const [formData, setFormData] = useState({});

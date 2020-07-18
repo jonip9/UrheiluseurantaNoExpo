@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
 import React, {useState, useContext} from 'react';
 import {Text, TextInput, View, Button} from 'react-native';
-import {Context} from './AuthContext';
-import {styles} from '../styles/styles';
+import {Context} from '../AuthContext';
+import {styles} from '../../styles/styles';
 
 export default function Register({navigation}) {
   const [regInfo, setRegInfo] = useState({

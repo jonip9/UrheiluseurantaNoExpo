@@ -3,9 +3,9 @@ import React, {useState, useEffect} from 'react';
 import {Text, TextInput, View, Button} from 'react-native';
 import {Picker} from '@react-native-community/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {styles} from '../styles/styles';
-import {checkNan} from '../utils/helpers';
-import {useFetchSportTypes} from '../hooks/hooks';
+import {styles} from '../../styles/styles';
+import {checkNan} from '../../utils/helpers';
+import {useFetchSportTypes} from '../../hooks/hooks';
 
 export default function ItemData({route, navigation}) {
   const [formData, setFormData] = useState({
