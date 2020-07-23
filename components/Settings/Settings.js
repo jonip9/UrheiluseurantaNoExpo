@@ -4,7 +4,7 @@ import {Text, TextInput, View, Button, Modal} from 'react-native';
 import {Context} from '../AuthContext';
 import {styles} from '../../styles/styles';
 import {checkNan} from '../../utils/helpers';
-import {useFetchUserInfo} from '../../hooks/hooks';
+import {useFetch} from '../../hooks/hooks';
 
 export default function Settings({route, navigation}) {
   const [formData, setFormData] = useState({});
@@ -16,7 +16,9 @@ export default function Settings({route, navigation}) {
   });
   const [modalVisible, setModalVisible] = useState(false);
   const {id} = route.params;
-  const {data, error} = useFetchUserInfo(id);
+  const {data, error, isLoading} = useFetch(
+    'http://192.168.1.102:3000/user/fetch/' + id,
+  );
   const {signOut} = useContext(Context);
 
   useEffect(() => {

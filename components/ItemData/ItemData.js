@@ -5,7 +5,7 @@ import {Picker} from '@react-native-community/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {styles} from '../../styles/styles';
 import {checkNan} from '../../utils/helpers';
-import {useFetchSportTypes} from '../../hooks/hooks';
+import {useFetch} from '../../hooks/hooks';
 
 export default function ItemData({route, navigation}) {
   const [formData, setFormData] = useState({
@@ -18,7 +18,9 @@ export default function ItemData({route, navigation}) {
   });
   const [submitMode, setSubmitMode] = useState('add');
   const [show, setShow] = useState(false);
-  const {types, typesError} = useFetchSportTypes();
+  const {data, error, isLoading} = useFetch(
+    'http://192.168.1.102:3000/event/types',
+  );
 
   useEffect(() => {
     if (route.params.itemData !== null) {
@@ -77,7 +79,7 @@ export default function ItemData({route, navigation}) {
         onValueChange={(itemValue, itemIndex) =>
           setFormData((state) => ({...state, sport: parseInt(itemValue)}))
         }>
-        {types.map((item, i) => {
+        {data.map((item, i) => {
           return (
             <Picker.Item key={item.id} label={item.type} value={item.id} />
           );

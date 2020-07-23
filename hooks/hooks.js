@@ -1,67 +1,29 @@
 import {useState, useEffect} from 'react';
 
-function useFetchSportTypes() {
-  const [types, setTypes] = useState([]);
-  const [typesError, setTypesError] = useState('');
-  const url = 'http://192.168.1.102:3000/event/types';
-
-  useEffect(() => {
-    const fetchSportTypes = async () => {
-      fetch(url, {
-        method: 'GET',
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Error');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setTypes(data);
-          console.log('Success: ', data);
-        })
-        .catch((error) => {
-          setTypesError(error);
-          console.error('Error: ', error);
-        });
-    };
-
-    fetchSportTypes();
-  }, []);
-
-  return {types, typesError};
-}
-
-function useFetchUserInfo(uid) {
+function useFetch(url) {
   const [data, setData] = useState([]);
-  const [error, setError] = useState('');
-  const url = 'http://192.168.1.102:3000/user/fetch/' + uid;
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      fetch(url, {
-        method: 'GET',
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Error');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setData(data);
-          console.log('Success: ', data);
-        })
-        .catch((error) => {
-          setError(error);
-          console.error('Error: ', error);
-        });
+    const fetchData = async () => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+        setData(json);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchUserInfo();
-  }, []);
+    fetchData();
+  }, [url]);
 
-  return {data, error};
+  return {data, error, isLoading};
 }
 
-export {useFetchSportTypes, useFetchUserInfo};
+export {useFetch};
