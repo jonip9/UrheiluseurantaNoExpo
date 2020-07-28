@@ -7,8 +7,6 @@ function AuthContext({children, dispatch}) {
   const authContext = useMemo(
     () => ({
       signIn: async (data) => {
-        console.log('Data: ' + JSON.stringify(data));
-
         fetch('http://192.168.1.102:3000/user/login', {
           method: 'POST',
           headers: {
@@ -23,7 +21,6 @@ function AuthContext({children, dispatch}) {
             return response.json();
           })
           .then(async (data) => {
-            console.log('returned data: ' + JSON.stringify(data.token));
             await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
             dispatch({type: 'SIGN_IN', token: data.token});
           })
@@ -36,8 +33,6 @@ function AuthContext({children, dispatch}) {
         dispatch({type: 'SIGN_OUT'});
       },
       signUp: async (data) => {
-        console.log('Data: ' + JSON.stringify(data));
-
         fetch('http://192.168.1.102:3000/user/register', {
           method: 'POST',
           headers: {

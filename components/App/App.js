@@ -46,7 +46,6 @@ export default function App({navigation}) {
 
       try {
         userToken = await AsyncStorage.getItem('userToken');
-        console.log('restored token: ' + userToken);
         dispatch({type: 'RESTORE_TOKEN', token: JSON.parse(userToken)});
       } catch (error) {
         // error

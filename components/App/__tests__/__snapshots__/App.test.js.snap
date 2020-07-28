@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`App renders correctly 1`] = `
 <View
   style={
     Object {
@@ -295,7 +295,11 @@ exports[`renders correctly 1`] = `
                         Odota...
                       </Text>
                       <Image
-                        source="test-file-stub"
+                        source={
+                          Object {
+                            "default": "test-file-stub",
+                          }
+                        }
                       />
                     </View>
                   </View>

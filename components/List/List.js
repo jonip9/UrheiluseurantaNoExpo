@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect} from 'react';
-import {Text, View, Button, Modal, FlatList} from 'react-native';
+import {View, Button, FlatList} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import ListItem from './components/ListItem';
 import {styles} from '../../styles/styles';
