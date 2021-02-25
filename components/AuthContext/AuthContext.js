@@ -1,9 +1,9 @@
-import React, {createContext, useMemo} from 'react';
+import React, { createContext, useMemo } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Context = createContext();
 
-function AuthContext({children, dispatch}) {
+function AuthContext({ children, dispatch }) {
   const authContext = useMemo(
     () => ({
       signIn: async (data) => {
@@ -22,7 +22,7 @@ function AuthContext({children, dispatch}) {
           })
           .then(async (data) => {
             await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
-            dispatch({type: 'SIGN_IN', token: data.token});
+            dispatch({ type: 'SIGN_IN', token: data.token });
           })
           .catch((error) => {
             console.error('Error: ', error);
@@ -30,7 +30,7 @@ function AuthContext({children, dispatch}) {
       },
       signOut: async () => {
         await AsyncStorage.removeItem('userToken');
-        dispatch({type: 'SIGN_OUT'});
+        dispatch({ type: 'SIGN_OUT' });
       },
       signUp: async (data) => {
         fetch('http://192.168.1.102:3000/user/register', {
@@ -48,7 +48,7 @@ function AuthContext({children, dispatch}) {
           })
           .then(async (data) => {
             await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
-            dispatch({type: 'SIGN_IN', token: data.token});
+            dispatch({ type: 'SIGN_IN', token: data.token });
           })
           .catch((error) => {
             console.error('Error: ', error);
@@ -61,4 +61,4 @@ function AuthContext({children, dispatch}) {
   return <Context.Provider value={authContext}>{children}</Context.Provider>;
 }
 
-export {Context, AuthContext};
+export { Context, AuthContext };

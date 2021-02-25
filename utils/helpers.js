@@ -1,5 +1,5 @@
 function checkNan(str) {
-  return isNaN(str) || (str === null) ? '' : str.toString();
+  return isNaN(str) || str === null ? '' : str.toString();
 }
 
-export {checkNan};
+export { checkNan };
