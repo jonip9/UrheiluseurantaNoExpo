@@ -20,7 +20,7 @@ function AuthContext({ children, dispatch }) {
             }
             return response.json();
           })
-          .then(async (data) => {
+          .then(async () => {
             await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
             dispatch({ type: 'SIGN_IN', token: data.token });
           })
@@ -46,7 +46,7 @@ function AuthContext({ children, dispatch }) {
             }
             return response.json();
           })
-          .then(async (data) => {
+          .then(async () => {
             await AsyncStorage.setItem('userToken', JSON.stringify(data.token));
             dispatch({ type: 'SIGN_IN', token: data.token });
           })

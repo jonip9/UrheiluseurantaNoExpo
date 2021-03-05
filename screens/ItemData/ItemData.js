@@ -37,13 +37,13 @@ export default function ItemData({ route, navigation }) {
     setFormData((state) => ({ ...state, date: currentDate }));
   }
 
-  async function submitEvent(data) {
+  async function submitEvent(event) {
     fetch('http://192.168.1.102:3000/event/' + submitMode, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(event),
     })
       .then((response) => {
         if (!response.ok) {
@@ -51,12 +51,12 @@ export default function ItemData({ route, navigation }) {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((response) => {
         navigation.goBack();
-        console.log('Success: ', data);
+        console.log('Success: ', response);
       })
-      .catch((error) => {
-        console.error('Error: ', error);
+      .catch((err) => {
+        console.error('Error: ', err);
       });
   }
 
