@@ -8,7 +8,6 @@ export default function Login({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useContext(Context);
-  console.log('test')
 
   return (
     <View style={styles.container}>
