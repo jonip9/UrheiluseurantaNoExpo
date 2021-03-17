@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useReducer, useEffect, useState } from 'react';
-import { Amplify } from 'aws-amplify';
+import { Amplify, Auth } from 'aws-amplify';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,10 +11,12 @@ import Register from './screens/Register';
 import ItemData from './screens/ItemData';
 import Splash from './screens/Splash';
 import awsConfig from './aws-config';
+import { Alert } from 'react-native';
 
 const Stack = createStackNavigator();
 
 export default function App({ navigation }) {
+  const [isAuthing, setIsAuthing] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);
 
   const [state, dispatch] = useReducer(
@@ -45,19 +47,34 @@ export default function App({ navigation }) {
   );
 
   useEffect(() => {
-    async function bootstrapAsync() {
-      let userToken;
+    onStartUp();
 
-      try {
-        userToken = await AsyncStorage.getItem('userToken');
-        dispatch({ type: 'RESTORE_TOKEN', token: JSON.parse(userToken) });
-      } catch (error) {
-        // error
+    // async function bootstrapAsync() {
+    //   let userToken;
+
+    //   try {
+    //     userToken = await AsyncStorage.getItem('userToken');
+    //     dispatch({ type: 'RESTORE_TOKEN', token: JSON.parse(userToken) });
+    //   } catch (error) {
+    //     // error
+    //   }
+    // }
+
+    // bootstrapAsync();
+  }, []);
+
+  const onStartUp = async () => {
+    try {
+      await Auth.currentSession();
+      setIsAuthed(true);
+    } catch (error) {
+      if (error !== 'No current user') {
+        Alert.alert(error)
       }
     }
 
-    bootstrapAsync();
-  }, []);
+    setIsAuthing(false);
+  };
 
   Amplify.configure({
     Auth: {
