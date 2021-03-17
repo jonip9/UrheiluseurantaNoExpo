@@ -1,18 +1,22 @@
 import 'react-native-gesture-handler';
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
+import { Amplify } from 'aws-amplify';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
-import { AuthContext } from '../AuthContext';
+import { Context } from '../AuthContext';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import ItemData from './screens/ItemData';
 import Splash from './screens/Splash';
+import awsConfig from './aws-config';
 
 const Stack = createStackNavigator();
 
 export default function App({ navigation }) {
+  const [isAuthed, setIsAuthed] = useState(false);
+
   const [state, dispatch] = useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -55,8 +59,26 @@ export default function App({ navigation }) {
     bootstrapAsync();
   }, []);
 
+  Amplify.configure({
+    Auth: {
+      mandatorySignIn: true,
+      region: awsConfig.cognito.REGION,
+      userPoolId: awsConfig.cognito.USER_POOL_ID,
+      userPoolWebClientId: awsConfig.cognito.APP_CLIENT_ID,
+    },
+    API: {
+      endpoints: [
+        {
+          name: 'events',
+          endpoint: awsConfig.apiGateway.URL,
+          region: awsConfig.apiGateway.REGION,
+        },
+      ],
+    },
+  });
+
   return (
-    <AuthContext dispatch={dispatch}>
+    <Context.Provider value={{ isAuthed, setIsAuthed }}>
       <NavigationContainer>
         <Stack.Navigator>
           {state.isLoading ? (
@@ -78,6 +100,6 @@ export default function App({ navigation }) {
           )}
         </Stack.Navigator>
       </NavigationContainer>
-    </AuthContext>
+    </Context.Provider>
   );
 }
