@@ -4,7 +4,7 @@ import { Amplify, Auth } from 'aws-amplify';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Context } from '../AuthContext';
+import { Context } from './components/AuthContext/';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Register from './screens/Register';
@@ -69,7 +69,7 @@ export default function App({ navigation }) {
       setIsAuthed(true);
     } catch (error) {
       if (error !== 'No current user') {
-        Alert.alert(error)
+        Alert.alert(error);
       }
     }
 
