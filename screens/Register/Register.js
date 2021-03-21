@@ -1,7 +1,8 @@
 import 'react-native-gesture-handler';
 import React, { useState, useContext } from 'react';
+import { Auth } from 'aws-amplify';
 import { Text, TextInput, View, Button } from 'react-native';
-import { Context } from '../AuthContext';
+import { useAuthContext } from '../../components/AuthContext';
 import { styles } from '../../styles/styles';
 
 export default function Register({ navigation }) {
@@ -11,7 +12,18 @@ export default function Register({ navigation }) {
     name: '',
     year: 1940,
   });
-  const { signUp } = useContext(Context);
+  const { setIsAuthed } = useAuthContext();
+
+  const handleSignUp = async () => {
+    try {
+      const newUser = await Auth.signUp({
+        username: regInfo.user,
+        password: regInfo.pass,
+      });
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -47,7 +59,7 @@ export default function Register({ navigation }) {
         }
       />
       <View style={styles.buttonModal}>
-        <Button title="OK" onPress={() => signUp(regInfo)} />
+        <Button title="OK" onPress={() => handleSignUp()} />
       </View>
       <View style={styles.buttonModal}>
         <Button title="Peruuta" onPress={() => navigation.goBack()} />
