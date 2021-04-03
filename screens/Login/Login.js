@@ -1,26 +1,27 @@
 import 'react-native-gesture-handler';
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Text, TextInput, View, Button, Alert } from 'react-native';
-import { Auth } from 'aws-amplify';
 import { useAuthContext } from '../../components/AuthContext';
 import { styles } from '../../styles/styles';
 import { useNavigation } from '@react-navigation/core';
+import AuthService from '../../services/AuthService';
 
 export default function Login() {
   const { setIsAuthed } = useAuthContext();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn } = useContext(Context);
 
   const navigation = useNavigation();
 
   const handleSignIn = async () => {
-    try {
-      await Auth.signIn(username, password);
-      setIsAuthed(true);
-    } catch (error) {
-      Alert.alert(error.message);
-    }
+    await AuthService.signIn(username, password)
+      .then(() => {
+        setIsAuthed(true);
+        navigation.navigate('Urheiluseuranta');
+      })
+      .catch((error) => {
+        Alert.alert(error);
+      });
   };
 
   return (

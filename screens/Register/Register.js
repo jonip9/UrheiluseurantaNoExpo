@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
-import React, { useState, useContext } from 'react';
-import { Auth } from 'aws-amplify';
+import React, { useState } from 'react';
 import { Text, TextInput, View, Button } from 'react-native';
 import { useAuthContext } from '../../components/AuthContext';
 import { styles } from '../../styles/styles';
+import AuthService from '../../services/AuthService';
 
 export default function Register({ navigation }) {
   const [regInfo, setRegInfo] = useState({
@@ -15,14 +15,13 @@ export default function Register({ navigation }) {
   const { setIsAuthed } = useAuthContext();
 
   const handleSignUp = async () => {
-    try {
-      const newUser = await Auth.signUp({
-        username: regInfo.user,
-        password: regInfo.pass,
+    await AuthService.signUp(regInfo.user, regInfo.pass)
+      .then((response) => {
+        console.log('response: ', response);
+      })
+      .catch((error) => {
+        console.error('error: ', error);
       });
-    } catch (error) {
-      console.log('error: ', error);
-    }
   };
 
   return (
