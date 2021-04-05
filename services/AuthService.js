@@ -2,7 +2,7 @@ import { Amplify, Auth } from 'aws-amplify';
 import awsConfig from '../aws-config';
 
 export default class AuthService {
-  static initialize() {
+  static initialize(setIsAuthed) {
     Amplify.configure({
       Auth: {
         mandatorySignIn: true,
@@ -29,30 +29,36 @@ export default class AuthService {
         password,
       });
 
-      return response;
+      return Promise.resolve(response);
     } catch (error) {
-      console.log('error: ', error);
-      return error.message;
+      return Promise.reject(error);
     }
   }
 
   static async signIn(username, password) {
     try {
-      const response = await Auth.signIn(username, password);
-
-      return response;
+      return await Auth.signIn(username, password);
+      //return Promise.resolve(response);
     } catch (error) {
-      return error.message;
+      throw new Error(error);
+      //return Promise.reject(error);
+    }
+  }
+
+  static async signOut() {
+    try {
+      return await Auth.signOut();
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
   static async checkSession() {
-    try {
-      const response = await Auth.currentSession();
-
-      return response;
-    } catch (error) {
-      return error.message;
-    }
+    return await Auth.currentSession();
+    //try {
+      //return await Auth.currentSession();
+    //} catch (error) {
+      //throw new Error(error);
+    //}
   }
 }

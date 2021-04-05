@@ -13,11 +13,12 @@ export default function Login() {
 
   const navigation = useNavigation();
 
-  const handleSignIn = async () => {
-    await AuthService.signIn(username, password)
-      .then(() => {
+  const handleSignIn = () => {
+    AuthService.signIn(username, password)
+      .then((response) => {
+        console.log('login res: ', response);
         setIsAuthed(true);
-        navigation.navigate('Urheiluseuranta');
+        //navigation.navigate('Urheiluseuranta');
       })
       .catch((error) => {
         Alert.alert(error);

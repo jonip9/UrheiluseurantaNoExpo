@@ -1,62 +1,78 @@
 import 'react-native-gesture-handler';
 import React, { useState, useContext, useEffect } from 'react';
 import { Text, TextInput, View, Button, Modal } from 'react-native';
-import { Context } from '../AuthContext';
+//import { Context } from '../../components/AuthContext';
+import { useAuthContext } from '../../components/AuthContext';
 import { styles } from '../../styles/styles';
 import { checkNan } from '../../utils/helpers';
-import { useFetch } from '../../hooks/hooks';
+import AuthService from '../../services/AuthService';
+//import { useFetch } from '../../hooks/hooks';
 
 export default function Settings({ route, navigation }) {
+  const { setIsAuthed } = useAuthContext();
   const [formData, setFormData] = useState({});
   const [passwords, setPasswords] = useState({
-    id: route.params.id,
+    id: route.params?.id,
     oldPassword: '',
     newPassword: '',
     repeatPassword: '',
   });
   const [modalVisible, setModalVisible] = useState(false);
-  const { id } = route.params;
-  const { data, error, isLoading } = useFetch(
-    'http://192.168.1.102:3000/user/fetch/' + id,
-  );
-  const { signOut } = useContext(Context);
+  //const { id } = route.params;
+  //const { data, error, isLoading } = useFetch(
+    //'http://192.168.1.102:3000/user/fetch/' + id,
+  //);
+  //const { signOut } = useContext(Context);
 
-  useEffect(() => {
-    setFormData(data);
-  }, [data]);
+  //useEffect(() => {
+    //setFormData(data);
+  //}, [data]);
 
-  async function saveUserInfo(mode, info) {
-    console.log('Info: ' + JSON.stringify(info));
-    console.log('Mode: ' + mode);
-    const url = 'http://192.168.1.102:3000/user/' + mode;
+  //async function saveUserInfo(mode, info) {
+    //console.log('Info: ' + JSON.stringify(info));
+    //console.log('Mode: ' + mode);
+    //const url = 'http://192.168.1.102:3000/user/' + mode;
 
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(info),
-    })
+    //fetch(url, {
+      //method: 'POST',
+      //headers: {
+        //'Content-Type': 'application/json',
+      //},
+      //body: JSON.stringify(info),
+    //})
+      //.then((response) => {
+        //if (!response.ok) {
+          //throw new Error('Error');
+        //}
+        //return response.json();
+      //})
+      //.then((data) => {
+        //console.log('Success: ', data);
+      //})
+      //.catch((error) => {
+        //console.error('Error: ', error);
+      //});
+  //}
+
+  const handleSignOut = () => {
+    AuthService.signOut()
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('Success: ', data);
+        console.log('signout res', response);
+        setIsAuthed(false);
       })
       .catch((error) => {
-        console.error('Error: ', error);
+        if (error !== 'The user is not authenticated') {
+          console.error(error);
+        }
       });
-  }
+  };
 
   function checkPasswords() {
     if (
       passwords.oldPassword === data.password &&
       passwords.newPassword === passwords.repeatPassword
     ) {
-      saveUserInfo('changepass', passwords);
+      //saveUserInfo('changepass', passwords);
       setModalVisible(false);
     }
   }
@@ -135,7 +151,7 @@ export default function Settings({ route, navigation }) {
       />
       <View style={styles.button}>
         <Button title="Vaihda salasana" onPress={() => setModalVisible(true)} />
-        <Button title="Kirjaudu ulos" onPress={() => signOut()} />
+        <Button title="Kirjaudu ulos" onPress={() => handleSignOut()} />
       </View>
     </View>
   );
