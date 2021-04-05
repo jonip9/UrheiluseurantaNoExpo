@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useState } from 'react';
 import { Text, View, Button, Modal } from 'react-native';
-import { styles } from '../../../../styles/styles';
+import { styles } from '../../styles/styles';
 
 export default function ListItem({ details, nav, refresh }) {
   const [modalVisible, setModalVisible] = useState(false);

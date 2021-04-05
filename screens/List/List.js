@@ -10,18 +10,18 @@ export default function List({ route, navigation }) {
   const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(false);
   const isFocused = useIsFocused();
-  const { id } = route.params;
-  const { user } = route.params;
-  const url = 'http://192.168.1.102:3000/event/all/' + id;
+  //const { id } = route.params;
+  //const { user } = route.params;
+  //const url = 'http://192.168.1.102:3000/event/all/' + id;
 
   useEffect(() => {
     if (isFocused) {
-      fetchAllEvents();
+      //fetchAllEvents();
     }
   }, [isFocused]);
 
   async function fetchAllEvents() {
-    fetch(url, {
+    fetch('url', {
       method: 'GET',
     })
       .then((response) => {
@@ -62,7 +62,7 @@ export default function List({ route, navigation }) {
         <Button
           title="Lisää"
           onPress={() =>
-            navigation.navigate('Tiedot', { userId: id, itemData: null })
+            navigation.navigate('Tiedot', { userId: 'id', itemData: null })
           }
         />
       </View>
