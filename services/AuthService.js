@@ -2,7 +2,7 @@ import { Amplify, Auth } from 'aws-amplify';
 import awsConfig from '../aws-config';
 
 export default class AuthService {
-  static initialize(setIsAuthed) {
+  static initialize() {
     Amplify.configure({
       Auth: {
         mandatorySignIn: true,
@@ -13,9 +13,16 @@ export default class AuthService {
       API: {
         endpoints: [
           {
-            name: 'events',
+            name: 'Api',
             endpoint: awsConfig.apiGateway.URL,
             region: awsConfig.apiGateway.REGION,
+            custom_header: async () => {
+              return {
+                Authorization: `Bearer ${(await Auth.currentSession())
+                  .getIdToken()
+                  .getJwtToken()}`,
+              };
+            }
           },
         ],
       },
@@ -23,42 +30,43 @@ export default class AuthService {
   }
 
   static async signUp(username, password) {
-    try {
-      const response = await Auth.signUp({
-        username,
-        password,
-      });
+    return await Auth.signUp(username, password);
+    //try {
+      //const response = await Auth.signUp({
+        //username,
+        //password,
+      //});
 
-      return Promise.resolve(response);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+      //return Promise.resolve(response);
+    //} catch (error) {
+      //return Promise.reject(error);
+    //}
   }
 
   static async signIn(username, password) {
-    try {
-      return await Auth.signIn(username, password);
-      //return Promise.resolve(response);
-    } catch (error) {
-      throw new Error(error);
-      //return Promise.reject(error);
-    }
+    return await Auth.signIn(username, password);
+    //try {
+      //return await Auth.signIn(username, password);
+    //} catch (error) {
+      //throw new Error(error);
+    //}
   }
 
   static async signOut() {
-    try {
       return await Auth.signOut();
-    } catch (error) {
-      throw new Error(error);
-    }
+    //try {
+    //return await Auth.signOut();
+    //} catch (error) {
+    //throw new Error(error);
+    //}
   }
 
   static async checkSession() {
     return await Auth.currentSession();
     //try {
-      //return await Auth.currentSession();
+    //return await Auth.currentSession();
     //} catch (error) {
-      //throw new Error(error);
+    //throw new Error(error);
     //}
   }
 }

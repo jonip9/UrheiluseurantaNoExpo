@@ -18,7 +18,7 @@ export default function App({ navigation }) {
   const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
-    AuthService.initialize(setIsAuthed);
+    AuthService.initialize();
     AuthService.checkSession()
       .then((response) => {
         console.log('sess res: ', response);
@@ -27,7 +27,7 @@ export default function App({ navigation }) {
       .catch((error) => {
         console.log('error ', error);
         if (error !== 'No current user') {
-          Alert.alert(error);
+          Alert.alert(error.message);
         }
       })
       .finally(() => setIsAuthing(false));
