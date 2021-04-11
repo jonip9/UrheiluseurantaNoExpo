@@ -4,43 +4,26 @@ import { View, Button, FlatList } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import ListItem from '../../components/ListItem';
 import { styles } from '../../styles/styles';
+import EventService from '../../services/EventService';
 
-export default function List({ route, navigation }) {
+export default function List({ navigation }) {
   const [data, setData] = useState([]);
-  const [error, setError] = useState('');
+  //const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(false);
   const isFocused = useIsFocused();
-  //const { id } = route.params;
-  //const { user } = route.params;
-  //const url = 'http://192.168.1.102:3000/event/all/' + id;
 
   useEffect(() => {
     if (isFocused) {
-      //fetchAllEvents();
+      fetchAllEvents();
     }
   }, [isFocused]);
 
-  async function fetchAllEvents() {
-    fetch('url', {
-      method: 'GET',
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setData(data);
-        setRefresh(false);
-        console.log('Success: ', data);
-      })
-      .catch((error) => {
-        setError(error);
-        setRefresh(false);
-        console.error('Error: ', error);
-      });
-  }
+  const fetchAllEvents = () => {
+    EventService.getEvents()
+      .then((dataRes) => setData(dataRes))
+      .catch((errorRes) => console.log('error:', errorRes))
+      .finally(() => setRefresh(false));
+  };
 
   function handleRefresh() {
     setRefresh(true);
@@ -52,7 +35,12 @@ export default function List({ route, navigation }) {
       <FlatList
         data={data}
         renderItem={({ item }) => (
-          <ListItem details={item} nav={navigation} refresh={fetchAllEvents} />
+          <ListItem
+            key={item.id}
+            details={item}
+            nav={navigation}
+            refresh={fetchAllEvents}
+          />
         )}
         keyExtractor={(item) => JSON.stringify(item.id)}
         onRefresh={() => handleRefresh()}
@@ -61,9 +49,7 @@ export default function List({ route, navigation }) {
       <View style={{ marginTop: 10 }}>
         <Button
           title="Lisää"
-          onPress={() =>
-            navigation.navigate('Tiedot', { userId: 'id', itemData: null })
-          }
+          onPress={() => navigation.navigate('Tiedot', { itemData: null })}
         />
       </View>
     </View>

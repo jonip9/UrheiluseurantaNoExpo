@@ -5,69 +5,52 @@ import { Picker } from '@react-native-community/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from '../../styles/styles';
 import { checkNan } from '../../utils/helpers';
-import { useFetch } from '../../hooks/hooks';
+import EventService from '../../services/EventService';
+
+const types = [
+  { id: 0, type: 'Jogging' },
+  { id: 1, type: 'Biking' },
+];
 
 export default function ItemData({ route, navigation }) {
   const [formData, setFormData] = useState({
-    user: route.params.userId,
-    date: new Date(),
-    sport: 1,
+    date: new Date().getTime(),
+    sport: 0,
     duration: 0,
     distance: 0,
     comment: '',
   });
   const [submitMode, setSubmitMode] = useState('add');
   const [show, setShow] = useState(false);
-  const { data, error, isLoading } = useFetch(
-    'http://192.168.1.102:3000/event/types',
-  );
 
   useEffect(() => {
     if (route.params.itemData !== null) {
       setSubmitMode('modify');
       setFormData(route.params.itemData);
-      setFormData((state) => ({ ...state, date: new Date(state.date) }));
+      setFormData((state) => ({ ...state, date: state.date }));
     }
   }, [route.params.itemData]);
 
   function onDateChange(event, selectedDate) {
-    const currentDate = selectedDate || formData.date;
+    const currentDate = selectedDate.getTime() || formData.date;
     setShow(false);
-    //setDate(currentDate);
     setFormData((state) => ({ ...state, date: currentDate }));
   }
 
-  async function submitEvent(event) {
-    fetch('http://192.168.1.102:3000/event/' + submitMode, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(event),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error');
-        }
-        return response.json();
-      })
-      .then((response) => {
-        navigation.goBack();
-        console.log('Success: ', response);
-      })
-      .catch((err) => {
-        console.error('Error: ', err);
-      });
-  }
+  const submitEvent = () => {
+    EventService.saveEvent(formData, submitMode)
+      .then(() => navigation.goBack())
+      .catch((errorRes) => console.log('error: ', errorRes));
+  };
 
   return (
     <View style={styles.container}>
       <Text>Päivämäärä</Text>
-      <Text>{formData.date.toLocaleDateString()}</Text>
+      <Text>{new Date(formData.date).toLocaleDateString()}</Text>
       <Button title="Muuta päiväys" onPress={() => setShow(true)} />
       {show && (
         <DateTimePicker
-          value={formData.date}
+          value={new Date(formData.date)}
           mode="date"
           display="calendar"
           onChange={onDateChange}
@@ -79,7 +62,7 @@ export default function ItemData({ route, navigation }) {
         onValueChange={(itemValue, itemIndex) =>
           setFormData((state) => ({ ...state, sport: parseInt(itemValue) }))
         }>
-        {data.map((item, i) => {
+        {types.map((item, i) => {
           return (
             <Picker.Item key={item.id} label={item.type} value={item.id} />
           );
@@ -109,7 +92,7 @@ export default function ItemData({ route, navigation }) {
         }
       />
       <View style={styles.button}>
-        <Button title="Tallenna" onPress={() => submitEvent(formData)} />
+        <Button title="Tallenna" onPress={() => submitEvent()} />
         <Button title="Peruuta" onPress={() => navigation.goBack()} />
       </View>
     </View>

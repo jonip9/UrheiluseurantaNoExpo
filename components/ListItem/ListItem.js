@@ -2,35 +2,17 @@ import 'react-native-gesture-handler';
 import React, { useState } from 'react';
 import { Text, View, Button, Modal } from 'react-native';
 import { styles } from '../../styles/styles';
+import EventService from '../../services/EventService';
 
 export default function ListItem({ details, nav, refresh }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const url = 'http://192.168.1.102:3000/event/delete';
 
-  async function deleteEvent() {
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id: details.id }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setModalVisible(false);
-        refresh();
-        console.log('Success: ', data);
-      })
-      .catch((error) => {
-        setModalVisible(false);
-        console.error('Error: ', error);
-      });
-  }
+  const deleteEvent = () => {
+    EventService.deleteEvent(details.eventId)
+      .then(() => refresh())
+      .catch((errorRes) => console.error(errorRes))
+      .finally(() => setModalVisible(false));
+  };
 
   return (
     <View style={styles.container}>
@@ -52,8 +34,8 @@ export default function ListItem({ details, nav, refresh }) {
       </Modal>
 
       <View>
-        <Text>{details.date.slice(0, 10)}</Text>
-        <Text>{details.type}</Text>
+        <Text>{new Date(details.date).toLocaleDateString()}</Text>
+        <Text>{details.sport}</Text>
       </View>
       <View>
         <Text>Aika: {details.duration} h</Text>
@@ -64,9 +46,7 @@ export default function ListItem({ details, nav, refresh }) {
         <Button title="Poista" onPress={() => setModalVisible(true)} />
         <Button
           title="Muokkaa"
-          onPress={() =>
-            nav.navigate('Tiedot', { userId: details.user, itemData: details })
-          }
+          onPress={() => nav.navigate('Tiedot', { itemData: details })}
         />
       </View>
     </View>
