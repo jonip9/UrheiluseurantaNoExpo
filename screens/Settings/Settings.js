@@ -1,14 +1,12 @@
 import 'react-native-gesture-handler';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, TextInput, View, Button, Modal } from 'react-native';
-//import { Context } from '../../components/AuthContext';
 import { useAuthContext } from '../../components/AuthContext';
 import { styles } from '../../styles/styles';
 import { checkNan } from '../../utils/helpers';
 import AuthService from '../../services/AuthService';
-//import { useFetch } from '../../hooks/hooks';
 
-export default function Settings({ route, navigation }) {
+export default function Settings({ route }) {
   const { setIsAuthed } = useAuthContext();
   const [formData, setFormData] = useState({});
   const [passwords, setPasswords] = useState({
@@ -18,51 +16,13 @@ export default function Settings({ route, navigation }) {
     repeatPassword: '',
   });
   const [modalVisible, setModalVisible] = useState(false);
-  //const { id } = route.params;
-  //const { data, error, isLoading } = useFetch(
-    //'http://192.168.1.102:3000/user/fetch/' + id,
-  //);
-  //const { signOut } = useContext(Context);
-
-  //useEffect(() => {
-    //setFormData(data);
-  //}, [data]);
-
-  //async function saveUserInfo(mode, info) {
-    //console.log('Info: ' + JSON.stringify(info));
-    //console.log('Mode: ' + mode);
-    //const url = 'http://192.168.1.102:3000/user/' + mode;
-
-    //fetch(url, {
-      //method: 'POST',
-      //headers: {
-        //'Content-Type': 'application/json',
-      //},
-      //body: JSON.stringify(info),
-    //})
-      //.then((response) => {
-        //if (!response.ok) {
-          //throw new Error('Error');
-        //}
-        //return response.json();
-      //})
-      //.then((data) => {
-        //console.log('Success: ', data);
-      //})
-      //.catch((error) => {
-        //console.error('Error: ', error);
-      //});
-  //}
 
   const handleSignOut = () => {
     AuthService.signOut()
-      .then((response) => {
-        console.log('signout res', response);
-        setIsAuthed(false);
-      })
+      .then((response) => setIsAuthed(false))
       .catch((error) => {
-        if (error !== 'The user is not authenticated') {
-          console.error(error);
+        if (error.message !== 'The user is not authenticated') {
+          console.error(error.message);
         }
       });
   };
@@ -145,10 +105,7 @@ export default function Settings({ route, navigation }) {
           setFormData((state) => ({ ...state, birthyear: parseInt(text) }))
         }
       />
-      <Button
-        title="Tallenna"
-        onPress={() => saveUserInfo('modify', formData)}
-      />
+      <Button title="Tallenna" onPress={() => {}} />
       <View style={styles.button}>
         <Button title="Vaihda salasana" onPress={() => setModalVisible(true)} />
         <Button title="Kirjaudu ulos" onPress={() => handleSignOut()} />

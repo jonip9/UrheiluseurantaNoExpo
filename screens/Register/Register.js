@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useState } from 'react';
-import { Text, TextInput, View, Button } from 'react-native';
-import { useAuthContext } from '../../components/AuthContext';
+import { Text, TextInput, View, Button, Modal } from 'react-native';
 import { styles } from '../../styles/styles';
 import AuthService from '../../services/AuthService';
 
@@ -12,20 +11,35 @@ export default function Register({ navigation }) {
     name: '',
     year: 1940,
   });
-  const { setIsAuthed } = useAuthContext();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [code, setCode] = useState('');
 
-  const handleSignUp = async () => {
-    await AuthService.signUp(regInfo.user, regInfo.pass)
+  const handleSignUp = () => {
+    AuthService.signUp(regInfo.user, regInfo.pass)
       .then((response) => {
         console.log('response: ', response);
+        setIsModalVisible(true);
       })
       .catch((error) => {
         console.error('error: ', error);
       });
   };
 
+  const handleConfirmation = () => {
+    AuthService.confirmSignIp(regInfo.user, code)
+      .then(() => navigation.goBack())
+      .catch((errorRes) => console.log(errorRes));
+  };
+
   return (
     <View style={styles.container}>
+      <Modal transparent={false} visible={isModalVisible}>
+        <Text>Enter confirmation code</Text>
+        <View>
+          <TextInput value={code} onChangeText={setCode} />
+          <Button title="Submit" onPress={() => handleConfirmation()} />
+        </View>
+      </Modal>
       <Text>Käyttäjätunnus</Text>
       <TextInput
         value={regInfo.user}

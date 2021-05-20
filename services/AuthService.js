@@ -22,7 +22,7 @@ export default class AuthService {
                   .getIdToken()
                   .getJwtToken()}`,
               };
-            }
+            },
           },
         ],
       },
@@ -31,42 +31,21 @@ export default class AuthService {
 
   static async signUp(username, password) {
     return await Auth.signUp(username, password);
-    //try {
-      //const response = await Auth.signUp({
-        //username,
-        //password,
-      //});
+  }
 
-      //return Promise.resolve(response);
-    //} catch (error) {
-      //return Promise.reject(error);
-    //}
+  static async confirmSignIp(username, code) {
+    return await Auth.confirmSignUp(username, code);
   }
 
   static async signIn(username, password) {
     return await Auth.signIn(username, password);
-    //try {
-      //return await Auth.signIn(username, password);
-    //} catch (error) {
-      //throw new Error(error);
-    //}
   }
 
   static async signOut() {
-      return await Auth.signOut();
-    //try {
-    //return await Auth.signOut();
-    //} catch (error) {
-    //throw new Error(error);
-    //}
+    return await Auth.signOut();
   }
 
   static async checkSession() {
     return await Auth.currentSession();
-    //try {
-    //return await Auth.currentSession();
-    //} catch (error) {
-    //throw new Error(error);
-    //}
   }
 }

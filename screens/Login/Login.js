@@ -15,13 +15,11 @@ export default function Login() {
 
   const handleSignIn = () => {
     AuthService.signIn(username, password)
-      .then((response) => {
-        console.log('login res: ', response);
-        setIsAuthed(true);
-        //navigation.navigate('Urheiluseuranta');
+      .then(() => {
+        setIsAuthed(true); // Käyttäjä ohjataan päänäkymään
       })
       .catch((error) => {
-        Alert.alert(error);
+        Alert.alert(error.message); // Käyttäjälle näytetään virheilmoitus
       });
   };
 
